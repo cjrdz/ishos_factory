@@ -9,9 +9,11 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.6",
     "@astrojs/ts-plugin": "^1.10.6",
     "astro": "^5.16.6",
-    "bulma": "^1.0.4"
+    "bulma": "^1.0.4",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@iconify-json/ic": "^1.2.4",
