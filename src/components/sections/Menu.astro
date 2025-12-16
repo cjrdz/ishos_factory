@@ -1,0 +1,156 @@
+---
+import { Image } from 'astro:assets';
+import type { MenuItem } from '../../types';
+import Menu1 from '../../assets/menu-1.png';
+import Menu2 from '../../assets/menu-2.png';
+import Menu3 from '../../assets/menu-3.png';
+import Menu4 from '../../assets/menu-4.png';
+import Menu5 from '../../assets/menu-5.png';
+import Menu6 from '../../assets/menu-6.png';
+import Menu7 from '../../assets/menu-7.png';
+
+const menuImages: MenuItem[] = [
+    {
+        id: "Menu2",
+        title: "Vasos & Tarrinas",
+        image: Menu2,
+        alt: "Vasos & Tarrinas",
+    },
+    {
+        id: "Menu3",
+        title: "Para Llevar",
+        image: Menu3,
+        alt: "Para Llevar",
+    },
+    {
+        id: "Menu4",
+        title: "Conos & Barquillos",
+        image: Menu4,
+        alt: "Conos & Barquillos",
+    },
+    {
+        id: "Menu5",
+        title: "Cajita Mix y Chocobananos",
+        image: Menu5,
+        alt: "Cajita Mix y Chocobananos",
+    },
+    {
+        id: "Menu6",
+        title: "Bowls",
+        image: Menu6,
+        alt: "Bowls especiales",
+    },
+    {
+        id: "Menu7",
+        title: "Toppings & Jaleas",
+        image: Menu7,
+        alt: "Toppings & Jaleas",
+    },
+];
+---
+
+<section id="menu" class="section teal-bg">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-book-open"></i> Nuestro Menú
+        </h2>
+        <div class="columns is-multiline">
+            {
+                menuImages.map((item, index) => {
+                    // All menu images render above the fold; load eagerly
+                    const loadingStrategy: "eager" = "eager";
+                    return (
+                        <div class="column is-12-mobile is-6-tablet is-4-desktop">
+                            <div class="card menu-card menu-card-animate" data-index={index}>
+                                <div class="card-image">
+                                    <figure class="image">
+                                        <Image
+                                            src={item.image}
+                                            alt={item.alt}
+                                            loading={loadingStrategy}
+                                            width={400}
+                                            height={300}
+                                        />
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Initial state - hidden and slightly scaled down */
+    .menu-card-animate {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    /* Animated state - visible and in position */
+    .menu-card-animate.animate-in {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    /* Staggered delays for each card */
+    .menu-card-animate[data-index="0"].animate-in {
+        transition-delay: 0.1s;
+    }
+    .menu-card-animate[data-index="1"].animate-in {
+        transition-delay: 0.2s;
+    }
+    .menu-card-animate[data-index="2"].animate-in {
+        transition-delay: 0.3s;
+    }
+    .menu-card-animate[data-index="3"].animate-in {
+        transition-delay: 0.4s;
+    }
+    .menu-card-animate[data-index="4"].animate-in {
+        transition-delay: 0.5s;
+    }
+    .menu-card-animate[data-index="5"].animate-in {
+        transition-delay: 0.6s;
+    }
+
+    /* Optimize for GPU acceleration */
+    .menu-card-animate {
+        will-change: transform, opacity;
+    }
+
+    /* Remove will-change after animation to free resources */
+    .menu-card-animate.animate-in {
+        will-change: auto;
+    }
+</style>
+
+<script>
+    // Lightweight Intersection Observer for scroll-triggered animations
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.menu-card-animate');
+        
+        // Only create observer if cards exist
+        if (cards.length === 0) return;
+
+        const observerOptions: IntersectionObserverInit = {
+            threshold: 0.15, // Trigger when 15% of card is visible
+            rootMargin: '0px 0px -50px 0px' // Trigger slightly before card enters viewport
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    // Unobserve after animation to improve performance
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe each card
+        cards.forEach(card => observer.observe(card));
+    });
+</script>

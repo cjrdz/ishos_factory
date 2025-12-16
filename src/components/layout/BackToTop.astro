@@ -1,0 +1,123 @@
+---
+// Back to top button component
+---
+
+<button
+    id="back-to-top"
+    class="back-to-top-button"
+    aria-label="Volver arriba"
+    title="Volver arriba"
+>
+    <i class="fas fa-ice-cream"></i>
+</button>
+
+<style>
+    .back-to-top-button {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(
+            135deg,
+            var(--isho-teal) 0%,
+            var(--isho-pink) 100%
+        );
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px) scale(0.8);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .back-to-top-button.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
+    .back-to-top-button:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(
+            135deg,
+            var(--isho-pink) 0%,
+            var(--isho-teal) 100%
+        );
+    }
+
+    .back-to-top-button:active {
+        transform: translateY(-3px) scale(1.05);
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 768px) {
+        .back-to-top-button {
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 48px;
+            height: 48px;
+            font-size: 1.25rem;
+        }
+    }
+
+    /* Animation for icon */
+    .back-to-top-button i {
+        transition: transform 0.3s ease;
+    }
+
+    .back-to-top-button:hover i {
+        transform: rotate(-15deg) scale(1.1);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const backToTopButton = document.getElementById('back-to-top') as HTMLButtonElement | null;
+        
+        if (!backToTopButton) return;
+
+        // Show/hide button based on scroll position
+        const toggleButton = (): void => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        };
+
+        // Throttle scroll events for better performance
+        let ticking = false;
+        const handleScroll = (): void => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    toggleButton();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        
+        // Check initial scroll position
+        toggleButton();
+
+        // Smooth scroll to top
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>

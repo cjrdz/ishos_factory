@@ -1,0 +1,262 @@
+---
+import type { Location, SocialLink } from '../../types';
+import LocationCard from '../cards/LocationCard.astro';
+
+// Contact phone number
+const phoneNumber: string = "+5037645-4347";
+const phoneNumberClean: string = "50376454347"; // For WhatsApp (no + or dashes)
+
+// Social media links
+const socialLinks: SocialLink[] = [
+    {
+        name: "Instagram",
+        url: "https://www.instagram.com/ishos_factory/?hl=en",
+        icon: "fab fa-instagram",
+        color: "#E4405F"
+    },
+    {
+        name: "Facebook",
+        url: "https://www.facebook.com/ishosfactory/",
+        icon: "fab fa-facebook",
+        color: "#1877F2"
+    },
+    {
+        name: "TikTok",
+        url: "https://www.tiktok.com/@ishosfactory",
+        icon: "fab fa-tiktok",
+        color: "#000000"
+    }
+];
+
+// Locations data - easily add more locations here
+// To get the embed URL for a location:
+// 1. Open Google Maps (maps.google.com) and search for your location
+// 2. Click the "Share" button
+// 3. Select the "Embed a map" tab
+// 4. Copy the iframe src URL (starts with https://www.google.com/maps/embed?pb=...)
+// 5. Paste it as the embedUrl below
+
+const locations: Location[] = [
+    {
+        name: "Isho's Sucursal 1",
+        address: "El Salvador",
+        // TODO: Replace this placeholder with your actual embed URL from Google Maps
+        // For now, using a search-based URL - replace with embed URL for better accuracy
+        embedUrl: "https://www.google.com/maps?q=Isho's+Sucursal+1+El+Salvador&output=embed",
+        directionsUrl: "https://maps.google.com/?q=Isho's+Sucursal+1+El+Salvador"
+    },
+    {
+        name: "Isho's Sucursal 2",
+        address: "El Salvador",
+        // Using search-based embed URL from the provided Google Maps link
+        embedUrl: "https://www.google.com/maps?q=Isho's+Sucursal+2+El+Salvador&output=embed",
+        directionsUrl: "https://maps.app.goo.gl/bSYLeqagKbSW3wUh8"
+    }
+];
+---
+
+<section id="contact" class="section teal-bg">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-map-marker-alt"></i> Contáctanos
+        </h2>
+        
+        <!-- Contact Info Cards -->
+        <div class="columns">
+            <div class="column is-8 is-offset-2">
+                <div
+                    class="box has-background-light"
+                    style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"
+                >
+                    <div class="content">
+                        <div class="columns is-mobile">
+                            <div class="column has-text-centered">
+                                <span
+                                    class="icon is-large"
+                                    style="color: var(--isho-dark-pink);"
+                                >
+                                    <i class="fas fa-3x fa-store"></i>
+                                </span>
+                                <h3
+                                    class="title is-5"
+                                    style="color: var(--isho-dark-pink); margin-top: 1rem;"
+                                >
+                                    Visítanos
+                                </h3>
+                                <p>El Salvador<br />Ahuachapán</p>
+                            </div>
+                            <div class="column has-text-centered">
+                                <span
+                                    class="icon is-large"
+                                    style="color: var(--isho-dark-pink);"
+                                >
+                                    <i class="fas fa-3x fa-phone"></i>
+                                </span>
+                                <h3
+                                    class="title is-5"
+                                    style="color: var(--isho-dark-pink); margin-top: 1rem;"
+                                >
+                                    Llámanos
+                                </h3>
+                                <div class="contact-buttons">
+                                    <a
+                                        href={`tel:${phoneNumber}`}
+                                        class="button contact-btn call-btn"
+                                    >
+                                        <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>
+                                        Llamar
+                                    </a>
+                                    <a
+                                        href={`https://wa.me/${phoneNumberClean}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="button contact-btn whatsapp-btn"
+                                    >
+                                        <i class="fab fa-whatsapp" style="margin-right: 0.5rem;"></i>
+                                        WhatsApp
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="column has-text-centered">
+                                <span
+                                    class="icon is-large"
+                                    style="color: var(--isho-dark-pink);"
+                                >
+                                    <i class="fas fa-3x fa-clock"></i>
+                                </span>
+                                <h3
+                                    class="title is-5"
+                                    style="color: var(--isho-dark-pink); margin-top: 1rem;"
+                                >
+                                    Horario
+                                </h3>
+                                <p>Lun - Viernes<br />10-30 AM - 6:30 PM</p>
+                                <p>Domingo<br />10-30 AM - 6:30 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media Section -->
+        <div class="columns" style="margin-top: 3rem;">
+            <div class="column is-8 is-offset-2">
+                <div
+                    class="box has-background-light"
+                    style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"
+                >
+                    <div class="content has-text-centered">
+                        <h3
+                            class="title is-4"
+                            style="color: var(--isho-dark-pink); margin-bottom: 1.5rem;"
+                        >
+                            <i class="fas fa-share-alt" style="margin-right: 0.5rem;"></i>
+                            Síguenos en Redes Sociales
+                        </h3>
+                        <div class="columns is-mobile is-centered">
+                            {socialLinks.map((social) => (
+                                <div class="column is-narrow">
+                                    <a
+                                        href={social.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="social-link"
+                                        style="display: inline-block; padding: 1rem 1.5rem; border-radius: 12px; transition: all 0.3s ease; text-decoration: none;"
+                                        aria-label={social.name}
+                                    >
+                                        <span class="icon is-large">
+                                            <i class={social.icon + " fa-2x"} style={`color: ${social.color};`}></i>
+                                        </span>
+                                        <p
+                                            class="is-size-6 has-text-weight-semibold"
+                                            style={`color: ${social.color}; margin-top: 0.5rem;`}
+                                        >
+                                            {social.name}
+                                        </p>
+                                    </a>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Locations Section -->
+        <div class="columns is-multiline" style="margin-top: 3rem;">
+            {locations.map((location) => (
+                <LocationCard
+                    name={location.name}
+                    address={location.address}
+                    embedUrl={location.embedUrl}
+                    directionsUrl={location.directionsUrl}
+                />
+            ))}
+        </div>
+    </div>
+</section>
+
+<style>
+    .social-link {
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .social-link:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .contact-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center;
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+    }
+
+    .contact-btn {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.625rem 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .call-btn {
+        background: linear-gradient(135deg, var(--isho-teal) 0%, var(--isho-pink) 100%);
+        color: white;
+    }
+
+    .call-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+
+    .whatsapp-btn {
+        background: #25D366;
+        color: white;
+    }
+
+    .whatsapp-btn:hover {
+        background: #20ba5a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        color: white;
+    }
+
+    @media screen and (max-width: 768px) {
+        .social-link {
+            padding: 0.75rem 1rem !important;
+        }
+    }
+</style>

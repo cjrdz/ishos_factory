@@ -1,0 +1,126 @@
+/* Import Bulma (from node_modules) */
+@import 'bulma/css/bulma.min.css';
+
+/* Isho's Brand Colors */
+:root {
+    --isho-teal: #4db8c4;
+    --isho-pink: #f5a3c7;
+    --isho-dark-pink: #d64b8a;
+    --isho-light-pink: #ffc0e1;
+}
+
+/* Typography */
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Gradient backgrounds */
+.has-gradient-bg {
+    background: linear-gradient(
+        135deg,
+        var(--isho-teal) 0%,
+        var(--isho-pink) 100%
+    );
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.has-gradient-bg-reverse {
+    background: linear-gradient(
+        135deg,
+        var(--isho-pink) 0%,
+        var(--isho-teal) 100%
+    );
+}
+
+/* Navbar overrides */
+.navbar.has-gradient-bg .navbar-item:hover,
+.navbar.has-gradient-bg .navbar-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar.has-gradient-bg .navbar-burger:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+@media screen and (max-width: 1023px) {
+    .navbar.has-gradient-bg .navbar-menu {
+        background: linear-gradient(
+            135deg,
+            var(--isho-teal) 0%,
+            var(--isho-pink) 100%
+        );
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Ensure fixed navbar sits above content and that the page reserves its height */
+.navbar.is-fixed-top {
+    z-index: 60;
+}
+
+/* Smoothly adjust content padding when navbar size changes */
+body.has-navbar-fixed-top {
+    transition: padding-top 0.2s ease;
+}
+
+/* Section styling */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--isho-dark-pink);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Card styling */
+.menu-card {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.menu-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure hover transform doesn't conflict with animation */
+.menu-card-animate.animate-in:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+.menu-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Background colors */
+.teal-bg {
+    background-color: #e8f8fa;
+}
+
+.pink-bg {
+    background-color: #fef0f5;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .menu-card {
+        margin-bottom: 1.5rem;
+    }
+}

@@ -1,0 +1,183 @@
+---
+// Navbar component with smooth scrolling and active states
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import IconLogo from '../../assets/icon.png';
+---
+
+<nav
+    class="navbar is-fixed-top is-spaced"
+    role="navigation"
+    aria-label="main navigation"
+    style="background: linear-gradient(135deg, var(--isho-pink) 0%, var(--isho-dark-pink) 100%); box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+>
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/" style="padding: 0.5rem 0.75rem;">
+                <span class="icon-text has-text-white">
+                    <Image src={IconLogo} alt="Isho's Gelatos & Sorbetes Logo" class="navbar-logo" loading="eager" width={120} height={48} fetchpriority="high" />
+                </span>
+            </a>
+
+            
+                <button type="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu" style="color: white; background: none; border: none; cursor: pointer;">
+                    <Icon name="ic:round-menu-open" style="color: white; height: 48px; width: 48px;" />
+                </button>
+        </div>
+
+        <div id="navbarMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item has-text-white has-text-weight-semibold is-size-5" href="#menu" data-nav-link>
+                    <span class="icon-text">
+                        <span class="icon">
+                            <Icon name="ic:baseline-icecream" style="color: white;" />
+                        </span>
+                        <span>Menú</span>
+                    </span>
+                </a>
+                <a class="navbar-item has-text-white has-text-weight-semibold is-size-5" href="#about" data-nav-link>
+                    <span class="icon-text">
+                        <span class="icon">
+                            <Icon name="ic:favorite" style="color: white;" />
+                        </span>
+                        <span>Acerca de</span>
+                    </span>
+                </a>
+                <a class="navbar-item has-text-white has-text-weight-semibold is-size-5" href="#contact" data-nav-link>
+                    <span class="icon-text">
+                        <span class="icon">
+                            <Icon name="ic:email" style="color: white;" />
+                        </span>
+                        <span>Contacto</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar-item:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar-item.is-active {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .navbar-burger:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .navbar-logo {
+        max-height: 3rem;
+        width: auto;
+        height: auto;
+        display: block;
+    }
+
+    @media screen and (max-width: 1023px) {
+        .navbar-menu {
+            background: linear-gradient(135deg, var(--isho-pink) 0%, var(--isho-dark-pink) 100%);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+    }
+</style>
+
+<script>
+    // Navbar behaviors: toggle, smooth scroll, active states, and dynamic page padding
+    document.addEventListener("DOMContentLoaded", () => {
+        const $navbarBurgers = Array.prototype.slice.call(
+            document.querySelectorAll(".navbar-burger"),
+            0,
+        );
+
+        let updateNavbarPaddingTimeout: NodeJS.Timeout | undefined;
+
+        // Update body padding-top to match the fixed navbar height so content isn't overlapped
+        function updateBodyPadding(): void {
+            const navbar = document.querySelector('.navbar.is-fixed-top') as HTMLElement;
+            if (!navbar) return;
+            const height = navbar.offsetHeight;
+            if (document.body.classList.contains('has-navbar-fixed-top')) {
+                document.body.style.paddingTop = height + 'px';
+            }
+        }
+
+        // Initial update
+        updateBodyPadding();
+
+        // Recompute on resize (debounced)
+        window.addEventListener('resize', () => {
+            clearTimeout(updateNavbarPaddingTimeout);
+            updateNavbarPaddingTimeout = setTimeout(updateBodyPadding, 100);
+        });
+
+        $navbarBurgers.forEach((el) => {
+            el.addEventListener("click", () => {
+                const target = (el as HTMLElement).dataset.target;
+                const $target = document.getElementById(target || '');
+                el.classList.toggle("is-active");
+                if ($target) {
+                    $target.classList.toggle("is-active");
+                }
+                // Recompute padding after menu state changes
+                setTimeout(updateBodyPadding, 0);
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        const navLinks = document.querySelectorAll('[data-nav-link]');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetSection = targetId ? document.querySelector(targetId) : null;
+
+                if (targetSection) {
+                    // Close mobile menu if open
+                    const navbarMenu = document.getElementById('navbarMenu');
+                    const navbarBurger = document.querySelector('.navbar-burger');
+                    if (navbarMenu?.classList.contains('is-active')) {
+                        navbarMenu.classList.remove('is-active');
+                        navbarBurger?.classList.remove('is-active');
+                        // Update padding after closing
+                        setTimeout(updateBodyPadding, 0);
+                    }
+
+                    // Smooth scroll
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Active state on scroll
+        const sections = document.querySelectorAll('section[id]');
+        const observerOptions: IntersectionObserverInit = {
+            threshold: 0.3,
+            rootMargin: '-100px 0px -50% 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('is-active');
+                        if (link.getAttribute('href') === `#${entry.target.id}`) {
+                            link.classList.add('is-active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+
+        // Also update once fonts/images have loaded in case navbar height changed
+        window.addEventListener('load', updateBodyPadding);
+    });
+</script>
