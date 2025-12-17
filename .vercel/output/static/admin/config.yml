@@ -1,0 +1,69 @@
+backend:
+  name: github
+  repo: cjrdz/ishos_factory
+  branch: main
+  # REQUIRED: point to your deployed OAuth server base URL (see README section below)
+  # Example if you deploy the GitHub OAuth provider at /api/auth on Vercel:
+  base_url: https://ishos-factory.vercel.app
+  auth_endpoint: /api/auth
+  # For local development, uncomment the next line and run `npx decap-cms-proxy-server`
+  # local_backend: true
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+publish_mode: editorial_workflow
+
+collections:
+  - name: menu
+    label: Menú
+    folder: "src/content/menu"
+    create: true
+    slug: "{{slug}}"
+    format: "json"
+    fields:
+      - { name: title, label: Título, widget: string }
+      - { name: alt, label: Texto alternativo, widget: string, required: false }
+      - { name: image, label: Imagen, widget: image }
+      - { name: order, label: Orden, widget: number, value_type: int, default: 1, min: 0 }
+
+  - name: locations
+    label: Sucursales
+    folder: "src/content/locations"
+    create: true
+    slug: "{{slug}}"
+    format: "json"
+    fields:
+      - { name: name, label: Nombre, widget: string }
+      - { name: address, label: Dirección, widget: string }
+      - { name: embedUrl, label: URL de mapa (Embed), widget: string }
+      - { name: directionsUrl, label: URL para direcciones, widget: string, required: false }
+      - { name: order, label: Orden, widget: number, value_type: int, default: 1, min: 0 }
+
+  - name: contact
+    label: Contacto
+    files:
+      - file: "src/content/contact.json"
+        name: contactInfo
+        label: Información de contacto
+        format: "json"
+        fields:
+          - { name: phoneNumber, label: Teléfono, widget: string }
+          - { name: phoneNumberClean, label: Teléfono para WhatsApp (solo dígitos), widget: string }
+          - label: Dirección (líneas)
+            name: addressLines
+            widget: list
+            field: { name: line, label: Línea, widget: string }
+          - label: Horarios
+            name: hours
+            widget: list
+            fields:
+              - { name: label, label: Día / rango, widget: string }
+              - { name: value, label: Horario, widget: string }
+          - label: Redes Sociales
+            name: socialLinks
+            widget: list
+            fields:
+              - { name: name, label: Nombre, widget: string }
+              - { name: url, label: URL, widget: string }
+              - { name: icon, label: Clase de ícono (Font Awesome), widget: string }
+              - { name: color, label: Color (hex), widget: string }
