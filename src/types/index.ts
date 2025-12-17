@@ -1,11 +1,11 @@
 // Shared TypeScript type definitions
-import type { ImageMetadata } from 'astro';
 
 export interface MenuItem {
-    id: string;
+    id?: string;
     title: string;
-    image: ImageMetadata;
-    alt: string;
+    image: string;
+    alt?: string;
+    order?: number;
 }
 
 export interface Location {
@@ -13,6 +13,7 @@ export interface Location {
     address: string;
     embedUrl: string;
     directionsUrl?: string;
+    order?: number;
 }
 
 export interface SocialLink {
@@ -31,4 +32,17 @@ export interface LocationCardProps {
     address: string;
     embedUrl: string;
     directionsUrl?: string;
+}
+
+export interface HourRange {
+    label: string;
+    value: string;
+}
+
+export interface ContactContent {
+    phoneNumber: string;
+    phoneNumberClean?: string;
+    addressLines: string[];
+    hours: HourRange[];
+    socialLinks: SocialLink[];
 }

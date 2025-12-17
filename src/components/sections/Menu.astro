@@ -1,52 +1,14 @@
 ---
-import { Image } from 'astro:assets';
 import type { MenuItem } from '../../types';
-import Menu1 from '../../assets/menu-1.png';
-import Menu2 from '../../assets/menu-2.png';
-import Menu3 from '../../assets/menu-3.png';
-import Menu4 from '../../assets/menu-4.png';
-import Menu5 from '../../assets/menu-5.png';
-import Menu6 from '../../assets/menu-6.png';
-import Menu7 from '../../assets/menu-7.png';
 
-const menuImages: MenuItem[] = [
-    {
-        id: "Menu2",
-        title: "Vasos & Tarrinas",
-        image: Menu2,
-        alt: "Vasos & Tarrinas",
-    },
-    {
-        id: "Menu3",
-        title: "Para Llevar",
-        image: Menu3,
-        alt: "Para Llevar",
-    },
-    {
-        id: "Menu4",
-        title: "Conos & Barquillos",
-        image: Menu4,
-        alt: "Conos & Barquillos",
-    },
-    {
-        id: "Menu5",
-        title: "Cajita Mix y Chocobananos",
-        image: Menu5,
-        alt: "Cajita Mix y Chocobananos",
-    },
-    {
-        id: "Menu6",
-        title: "Bowls",
-        image: Menu6,
-        alt: "Bowls especiales",
-    },
-    {
-        id: "Menu7",
-        title: "Toppings & Jaleas",
-        image: Menu7,
-        alt: "Toppings & Jaleas",
-    },
-];
+const menuModules = import.meta.glob<{ default: MenuItem }>(
+    '../../content/menu/*.json',
+    { eager: true }
+);
+
+const menuImages: MenuItem[] = Object.values(menuModules)
+    .map((module) => module.default)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 ---
 
 <section id="menu" class="section teal-bg">
@@ -64,12 +26,13 @@ const menuImages: MenuItem[] = [
                             <div class="card menu-card menu-card-animate" data-index={index}>
                                 <div class="card-image">
                                     <figure class="image">
-                                        <Image
+                                        <img
                                             src={item.image}
-                                            alt={item.alt}
+                                            alt={item.alt || item.title}
                                             loading={loadingStrategy}
-                                            width={400}
-                                            height={300}
+                                            width="400"
+                                            height="300"
+                                            style="object-fit: cover; width: 100%; height: 100%;"
                                         />
                                     </figure>
                                 </div>
