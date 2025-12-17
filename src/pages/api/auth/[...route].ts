@@ -86,7 +86,14 @@ export const GET: APIRoute = async ({ request, params }) => {
                 return json({ error: 'No access_token', data }, 500);
             }
 
-            return json({ token: data.access_token });
+            // Redirect back to Decap admin with token so the UI can complete auth
+            const adminRedirect = `${baseUrl}/admin/#/auth/callback?token=${data.access_token}`;
+            return new Response(null, {
+                status: 302,
+                headers: {
+                    Location: adminRedirect,
+                },
+            });
         } catch (err) {
             return json({ error: 'OAuth error', details: `${err}` }, 500);
         }
