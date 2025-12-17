@@ -69,7 +69,7 @@ const GET = async ({ request, params }) => {
       if (!data.access_token) {
         return json({ error: "No access_token", data }, 500);
       }
-      const adminRedirect = `${baseUrl}/admin/#/auth/callback?token=${data.access_token}`;
+      const adminRedirect = `${baseUrl}/admin/#/auth/callback?token=${data.access_token}&provider=github`;
       return new Response(null, {
         status: 302,
         headers: {
