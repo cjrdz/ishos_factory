@@ -1,7 +1,7 @@
 ---
 declare global {
     interface Window {
-        CMS: unknown;
+        CMS: any;
     }
 }
 ---
@@ -21,5 +21,37 @@ declare global {
     </head>
     <body>
         <script src="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.js"></script>
+        
+        <script>
+            let loggedIn = false;
+            let redirecting = false;
+            
+            // Watch for DOM changes to detect logout
+            const observer = new MutationObserver(function() {
+                // Check if login button appears (means user logged out)
+                const loginButton = document.querySelector('[class*="AppHeader-button"]');
+                const loginText = document.body.textContent || '';
+                
+                if (loginText.includes('Login') && loggedIn && !redirecting) {
+                    console.log('Logout detected, redirecting home...');
+                    redirecting = true;
+                    setTimeout(function() {
+                        window.location.href = '/';
+                    }, 500);
+                }
+                
+                // Check if user is logged in
+                if (loginText.includes('Menú') || loginText.includes('Workflow') || window.location.hash.includes('/collections')) {
+                    loggedIn = true;
+                }
+            });
+            
+            // Start observing
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+        </script>
     </body>
 </html>
