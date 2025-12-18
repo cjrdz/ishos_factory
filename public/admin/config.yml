@@ -9,6 +9,10 @@ backend:
   # For local development, uncomment the next line and run `npx decap-cms-proxy-server`
   # local_backend: true
 
+  # Logout URL when user is logged out
+  site_url: https://ishos-factory.vercel.app
+  display_url: https://ishos-factory.vercel.app
+
 media_folder: "public/uploads"
 public_folder: "/uploads"
 publish_mode: editorial_workflow
