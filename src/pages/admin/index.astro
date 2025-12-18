@@ -1,7 +1,5 @@
 ---
-// src/pages/admin/index.astro - Custom styled login with logo and back button
-import "../styles/global.css";
-
+// src/pages/admin/index.astro - Clean version, no logout redirect
 declare global {
     interface Window {
         CMS: any;
@@ -10,194 +8,19 @@ declare global {
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Content Manager | Isho's Factory</title>
         <meta name="robots" content="noindex" />
-        <link rel="icon" href="/favicon.png" type="image/png" />
         <link href="/admin/config.yml" type="text/yaml" rel="cms-config-url" />
         <link
             rel="stylesheet"
             href="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.css"
         />
-        <style>
-            /* Import Bulma variables and use Isho's brand colors */
-            :root {
-                --isho-teal: #4db8c4;
-                --isho-pink: #f5a3c7;
-                --isho-dark-pink: #d64b8a;
-                --isho-light-pink: #ffc0e1;
-            }
-
-            /* Back to site button - always visible, using Bulma button styles */
-            .back-to-site {
-                position: fixed;
-                top: 1.5rem;
-                left: 1.5rem;
-                z-index: 10000;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                background: rgba(255, 255, 255, 0.95);
-                color: #333;
-                padding: 0.75rem 1.25rem;
-                border-radius: 0.5rem;
-                text-decoration: none;
-                font-size: 0.875rem;
-                font-weight: 500;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-                transition: all 0.2s ease;
-                backdrop-filter: blur(10px);
-            }
-
-            .back-to-site:hover {
-                background: rgba(255, 255, 255, 1);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-                transform: translateY(-1px);
-            }
-
-            .back-to-site svg {
-                width: 1rem;
-                height: 1rem;
-            }
-
-            /* Custom logo on login page - only visible on login screen */
-            .login-logo {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 1;
-                text-align: center;
-                pointer-events: none;
-                opacity: 1;
-                transition: opacity 0.3s ease;
-            }
-
-            /* Hide logo when CMS is loaded (multiple selectors for reliability) */
-            body:has([class*="App-app"]) .login-logo,
-            body:has([id*="nc-root"]) .login-logo,
-            body:has([class*="nc-root"]) .login-logo,
-            .cms-loaded .login-logo {
-                display: none !important;
-                opacity: 0;
-            }
-
-            .login-logo img {
-                width: 120px;
-                height: 120px;
-                margin-bottom: 1rem;
-                border-radius: 1.25rem;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                object-fit: contain;
-            }
-
-            .login-logo h1 {
-                font-size: 1.75rem;
-                font-weight: 700;
-                color: #333;
-                margin: 0 0 0.5rem 0;
-            }
-
-            .login-logo p {
-                font-size: 1rem;
-                color: #666;
-                margin: 0;
-            }
-
-            /* Ensure CMS panel has proper z-index */
-            [class*="App-app"],
-            [id*="nc-root"],
-            [class*="nc-root"] {
-                position: relative;
-                z-index: 10;
-            }
-
-            /* Improve login button styling with Isho's brand colors */
-            button[class*="AuthenticationPage-button"],
-            button[class*="LoginButton"] {
-                background: linear-gradient(
-                    135deg,
-                    var(--isho-pink) 0%,
-                    var(--isho-dark-pink) 100%
-                ) !important;
-                border: none !important;
-                padding: 0.75rem 2rem !important;
-                font-size: 1rem !important;
-                font-weight: 600 !important;
-                border-radius: 0.5rem !important;
-                transition: all 0.2s ease !important;
-                color: white !important;
-            }
-
-            button[class*="AuthenticationPage-button"]:hover,
-            button[class*="LoginButton"]:hover {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 8px 16px rgba(214, 75, 138, 0.3) !important;
-            }
-        </style>
     </head>
     <body>
-        <!-- Back to Site Button -->
-        <a href="/" class="back-to-site">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            Volver al Sitio
-        </a>
-
-        <!-- Custom Logo for Login Page -->
-        <div class="login-logo">
-            <img
-                src="/favicon.svg"
-                alt="Isho's Factory Logo"
-                onerror="this.src='/favicon.png'"
-            />
-            <h1>Isho's Factory</h1>
-            <p>Panel de Administración</p>
-        </div>
-
         <script src="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.js"></script>
-        <script>
-            // Hide login logo when CMS loads
-            (function () {
-                const checkCMSLoaded = () => {
-                    const cmsRoot =
-                        document.querySelector('[class*="App-app"]') ||
-                        document.querySelector('[id*="nc-root"]') ||
-                        document.querySelector('[class*="nc-root"]');
-
-                    if (cmsRoot) {
-                        document.body.classList.add("cms-loaded");
-                        const loginLogo = document.querySelector(".login-logo") as HTMLElement;
-                        if (loginLogo) {
-                            loginLogo.style.display = "none";
-                        }
-                    } else {
-                        setTimeout(checkCMSLoaded, 100);
-                    }
-                };
-
-                // Start checking after a short delay
-                setTimeout(checkCMSLoaded, 500);
-
-                // Also listen for DOM changes
-                const observer = new MutationObserver(checkCMSLoaded);
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true,
-                });
-            })();
-        </script>
     </body>
 </html>
