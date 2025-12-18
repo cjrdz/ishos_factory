@@ -23,35 +23,41 @@ declare global {
         <script src="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.js"></script>
         
         <script>
-            let loggedIn = false;
-            let redirecting = false;
-            
-            // Watch for DOM changes to detect logout
-            const observer = new MutationObserver(function() {
-                // Check if login button appears (means user logged out)
-                const loginButton = document.querySelector('[class*="AppHeader-button"]');
-                const loginText = document.body.textContent || '';
+            // Only redirect after an actual logout, not on initial page load
+            (function() {
+                let hasBeenAuthenticated = false;
+                let checkCount = 0;
+                const maxChecks = 3; // Only check first few seconds
                 
-                if (loginText.includes('Login') && loggedIn && !redirecting) {
-                    console.log('Logout detected, redirecting home...');
-                    redirecting = true;
-                    setTimeout(function() {
+                const checkAuth = setInterval(function() {
+                    checkCount++;
+                    
+                    const hash = window.location.hash;
+                    const isInCMS = hash.includes('/collections') || 
+                                   hash.includes('/workflow') ||
+                                   hash.includes('/edit');
+                    
+                    // User is authenticated and using the CMS
+                    if (isInCMS) {
+                        hasBeenAuthenticated = true;
+                        checkCount = 0; // Reset counter when in CMS
+                    }
+                    
+                    // Check for logout: was authenticated, now back at login
+                    const isAtLogin = hash === '' || hash === '#/' || hash === '#/auth';
+                    
+                    if (hasBeenAuthenticated && isAtLogin) {
+                        console.log('Logout detected - redirecting to homepage');
+                        clearInterval(checkAuth);
                         window.location.href = '/';
-                    }, 500);
-                }
-                
-                // Check if user is logged in
-                if (loginText.includes('Menú') || loginText.includes('Workflow') || window.location.hash.includes('/collections')) {
-                    loggedIn = true;
-                }
-            });
-            
-            // Start observing
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
+                    }
+                    
+                    // Stop checking after initial load period if never authenticated
+                    if (!hasBeenAuthenticated && checkCount > maxChecks) {
+                        clearInterval(checkAuth);
+                    }
+                }, 1000);
+            })();
         </script>
     </body>
 </html>
