@@ -1,103 +1,151 @@
+// pages/api/auth/[...route].ts
 import type { APIRoute } from 'astro';
 
 export const prerender = false;
-
-const json = (data: unknown, status = 200) =>
-    new Response(JSON.stringify(data), {
-        status,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        },
-    });
-
-export const OPTIONS: APIRoute = async () => {
-    return new Response(null, {
-        status: 200,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        },
-    });
-};
 
 export const GET: APIRoute = async ({ request, params }) => {
     const routeParam = params.route;
     const routeParts = routeParam ? routeParam.split('/') : [];
 
-    const clientId = process.env.OAUTH_CLIENT_ID;
-    const clientSecret = process.env.OAUTH_CLIENT_SECRET;
+    const clientId = import.meta.env.OAUTH_CLIENT_ID;
+    const clientSecret = import.meta.env.OAUTH_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
-        return json({ error: 'Missing OAuth env vars' }, 500);
-    }
-
-    const baseUrl =
-        process.env.BASE_URL ||
-        `${request.headers.get('x-forwarded-proto') ?? 'https'}://${request.headers.get('host')}`;
-    const callbackPath = process.env.REDIRECT_URL || '/api/auth/callback';
-    const redirectUri = `${baseUrl}${callbackPath}`;
-
-    // Start OAuth: /api/auth
-    if (routeParts.length === 0) {
-        const authorizeUrl = new URL('https://github.com/login/oauth/authorize');
-        authorizeUrl.searchParams.set('client_id', clientId);
-        authorizeUrl.searchParams.set('redirect_uri', redirectUri);
-        authorizeUrl.searchParams.set('scope', 'repo');
-        return new Response(null, {
-            status: 302,
-            headers: {
-                Location: authorizeUrl.toString(),
-            },
+        return new Response(JSON.stringify({ error: 'Missing OAuth credentials' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
         });
     }
 
-    // Callback: /api/auth/callback
+    const url = new URL(request.url);
+    const origin = url.origin;
+
+    // Step 1: Initial OAuth request - Redirect to GitHub
+    if (routeParts.length === 0) {
+        const state = url.searchParams.get('state') || '';
+        const authorizeUrl = new URL('https://github.com/login/oauth/authorize');
+        authorizeUrl.searchParams.set('client_id', clientId);
+        authorizeUrl.searchParams.set('redirect_uri', `${origin}/api/auth/callback`);
+        authorizeUrl.searchParams.set('scope', 'repo,user');
+        authorizeUrl.searchParams.set('state', state);
+
+        return new Response(null, {
+            status: 302,
+            headers: { Location: authorizeUrl.toString() }
+        });
+    }
+
+    // Step 2: GitHub callback - Exchange code for token
     if (routeParts[0] === 'callback') {
-        const url = new URL(request.url);
         const code = url.searchParams.get('code');
+        const state = url.searchParams.get('state') || '';
+
         if (!code) {
-            return json({ error: 'Missing code' }, 400);
+            return new Response(JSON.stringify({ error: 'No code provided' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         try {
-            const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
+            // Exchange code for access token
+            const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
                 method: 'POST',
                 headers: {
-                    Accept: 'application/json',
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                 },
                 body: JSON.stringify({
                     client_id: clientId,
                     client_secret: clientSecret,
-                    code,
-                    redirect_uri: redirectUri,
+                    code: code,
+                    redirect_uri: `${origin}/api/auth/callback`,
                 }),
             });
 
-            if (!tokenResp.ok) {
-                const text = await tokenResp.text();
-                return json({ error: 'Token exchange failed', text }, 500);
+            const data = await tokenResponse.json();
+
+            if (data.error || !data.access_token) {
+                throw new Error(data.error_description || 'Failed to get access token');
             }
 
-            const data = await tokenResp.json();
-            if (!data.access_token) {
-                return json({ error: 'No access_token', data }, 500);
-            }
+            // Return HTML that posts message back to Decap CMS
+            const html = `
 
-            // Redirect back to Decap admin with token and provider so the UI can complete auth
-            const adminRedirect = `${baseUrl}/admin/#/auth/callback?token=${data.access_token}&provider=github`;
-            return new Response(null, {
-                status: 302,
-                headers: {
-                    Location: adminRedirect,
-                },
+
+
+    Authorizing...
+    
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+        }
+        .message {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    
+
+
+    
+        Authorization Successful!
+        Redirecting to CMS...
+    
+    
+        (function() {
+            function receiveMessage(e) {
+                console.log("receiveMessage:", e);
+                window.opener.postMessage(
+                    'authorization:github:success:' + JSON.stringify({
+                        token: "${data.access_token}",
+                        provider: "github"
+                    }),
+                    e.origin
+                );
+                window.removeEventListener("message", receiveMessage, false);
+            }
+            
+            window.addEventListener("message", receiveMessage, false);
+            
+            console.log("Sending authorizing message");
+            window.opener.postMessage("authorizing:github", "*");
+            
+            // Fallback: close window after 3 seconds
+            setTimeout(function() {
+                window.close();
+            }, 3000);
+        })();
+    
+
+`;
+
+            return new Response(html, {
+                status: 200,
+                headers: { 'Content-Type': 'text/html' }
             });
-        } catch (err) {
-            return json({ error: 'OAuth error', details: `${err}` }, 500);
+
+        } catch (error) {
+            console.error('OAuth error:', error);
+            return new Response(JSON.stringify({ 
+                error: 'OAuth failed', 
+                details: error instanceof Error ? error.message : 'Unknown error'
+            }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
     }
 
-    return json({ error: 'Not found' }, 404);
+    return new Response(JSON.stringify({ error: 'Not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' }
+    });
 };

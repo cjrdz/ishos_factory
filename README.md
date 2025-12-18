@@ -1,43 +1,64 @@
-# Astro Starter Kit: Minimal
+# Isho's Gelatos & Sorbetes
 
-```sh
-pnpm create astro@latest -- --template minimal
+Website for Isho's Gelatos & Sorbetes - El Salvador.
+
+## 🚀 Tech Stack
+
+- **Framework**: [Astro](https://astro.build) v5.16.6
+- **Styling**: Bulma CSS Framework
+- **CMS**: Decap CMS (formerly Netlify CMS)
+- **Deployment**: Vercel (Serverless)
+- **Icons**: Astro Icon with Iconify
+
+## 📁 Project Structure
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
 ├── public/
+│   ├── admin/          # Decap CMS configuration
+│   └── uploads/        # Menu images and media files
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── assets/         # Static assets (icons, etc.)
+│   ├── components/     # Astro components
+│   │   ├── cards/      # Card components
+│   │   ├── layout/     # Layout components (NavBar, Footer, etc.)
+│   │   └── sections/   # Page sections (Hero, Menu, About, Contact)
+│   ├── content/        # CMS content (menu items, locations, contact)
+│   ├── layouts/        # Page layouts
+│   ├── pages/          # Routes and pages
+│   │   ├── admin/      # CMS admin interface
+│   │   └── api/        # API routes (authentication)
+│   ├── styles/         # Global styles
+│   └── types/          # TypeScript type definitions
+└── vercel.json         # Vercel deployment configuration
 ```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
 
 ## 🧞 Commands
 
-All commands are run from the root of the project, from a terminal:
+All commands are run from the root of the project:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
+| Command                | Action                                           |
+| :--------------------- | :----------------------------------------------- |
+| `pnpm install`         | Installs dependencies                            |
 | `pnpm dev`             | Starts local dev server at `localhost:4321`      |
 | `pnpm build`           | Build your production site to `./dist/`          |
 | `pnpm preview`         | Preview your build locally, before deploying     |
 | `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
 
-## 👀 Want to learn more?
+## 📝 Content Management
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Content is managed through Decap CMS, accessible at `/admin`. The CMS allows editing:
+
+- **Menu items** (`src/content/menu/*.json`)
+- **Locations** (`src/content/locations/*.json`)
+- **Contact information** (`src/content/contact.json`)
+
+Menu images are stored in `public/uploads/` and referenced in the menu JSON files.
+
+## 🚢 Deployment
+
+The project is configured for deployment on Vercel with serverless output. The deployment is handled automatically through the Vercel integration.
+
+## 📄 License
+
+Private project - All rights reserved.
