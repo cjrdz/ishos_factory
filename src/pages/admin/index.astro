@@ -1,4 +1,5 @@
 ---
+// src/pages/admin/index.astro - Custom styled login with logo and back button
 declare global {
     interface Window {
         CMS: any;
@@ -18,46 +19,116 @@ declare global {
             rel="stylesheet"
             href="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.css"
         />
+        <style>
+            /* Custom styles for login page and CMS */
+            
+            /* Back to site button - always visible */
+            .back-to-site {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 10000;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(255, 255, 255, 0.95);
+                color: #333;
+                padding: 10px 20px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                transition: all 0.2s ease;
+                backdrop-filter: blur(10px);
+            }
+            
+            .back-to-site:hover {
+                background: rgba(255, 255, 255, 1);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                transform: translateY(-1px);
+            }
+            
+            .back-to-site svg {
+                width: 16px;
+                height: 16px;
+            }
+            
+            /* Custom logo on login page */
+            .login-logo {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -200px);
+                z-index: 9999;
+                text-align: center;
+                pointer-events: none;
+            }
+            
+            .login-logo img {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 16px;
+                border-radius: 20px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            .login-logo h1 {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 28px;
+                font-weight: 700;
+                color: #333;
+                margin: 0 0 8px 0;
+            }
+            
+            .login-logo p {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 16px;
+                color: #666;
+                margin: 0;
+            }
+            
+            /* Hide logo when logged in (when CMS content loads) */
+            body:has([class*="App-app"]) .login-logo {
+                display: none;
+            }
+            
+            /* Improve login button styling */
+            button[class*="AuthenticationPage-button"],
+            button[class*="LoginButton"] {
+                background: linear-gradient(135deg, #ec4899 0%, #f97316 100%) !important;
+                border: none !important;
+                padding: 12px 32px !important;
+                font-size: 16px !important;
+                font-weight: 600 !important;
+                border-radius: 8px !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            button[class*="AuthenticationPage-button"]:hover,
+            button[class*="LoginButton"]:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 16px rgba(236, 72, 153, 0.3) !important;
+            }
+        </style>
     </head>
     <body>
-        <script src="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.js"></script>
+        <!-- Back to Site Button -->
+        <a href="/" class="back-to-site">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Volver al Sitio
+        </a>
         
-        <script>
-            // Only redirect after an actual logout, not on initial page load
-            (function() {
-                let hasBeenAuthenticated = false;
-                let checkCount = 0;
-                const maxChecks = 3; // Only check first few seconds
-                
-                const checkAuth = setInterval(function() {
-                    checkCount++;
-                    
-                    const hash = window.location.hash;
-                    const isInCMS = hash.includes('/collections') || 
-                                   hash.includes('/workflow') ||
-                                   hash.includes('/edit');
-                    
-                    // User is authenticated and using the CMS
-                    if (isInCMS) {
-                        hasBeenAuthenticated = true;
-                        checkCount = 0; // Reset counter when in CMS
-                    }
-                    
-                    // Check for logout: was authenticated, now back at login
-                    const isAtLogin = hash === '' || hash === '#/' || hash === '#/auth';
-                    
-                    if (hasBeenAuthenticated && isAtLogin) {
-                        console.log('Logout detected - redirecting to homepage');
-                        clearInterval(checkAuth);
-                        window.location.href = '/';
-                    }
-                    
-                    // Stop checking after initial load period if never authenticated
-                    if (!hasBeenAuthenticated && checkCount > maxChecks) {
-                        clearInterval(checkAuth);
-                    }
-                }, 1000);
-            })();
-        </script>
+        <!-- Custom Logo for Login Page -->
+        <div class="login-logo">
+            <img src="/favicon.svg" alt="Isho's Factory Logo" onerror="this.src='/favicon.png'">
+            <h1>Isho's Factory</h1>
+            <p>Panel de Administración</p>
+        </div>
+        
+        <script src="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.js"></script>
     </body>
 </html>
