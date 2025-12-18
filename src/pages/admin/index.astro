@@ -1,5 +1,7 @@
 ---
-// src/pages/admin/index.astro - Clean version, no logout redirect
+// src/pages/admin/index.astro
+import "../../styles/admin.css";
+
 declare global {
     interface Window {
         CMS: any;
@@ -19,8 +21,31 @@ declare global {
             rel="stylesheet"
             href="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.css"
         />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
     </head>
     <body>
+        <header class="admin-header">
+            <div class="container">
+                <div>
+                    <h1 class="title">
+                        <i class="fas fa-cog"></i> Content Manager
+                    </h1>
+                    <p class="subtitle">Manage your website content</p>
+                </div>
+                <a href="/" class="home-button">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </div>
+        </header>
+
+        <main class="cms-container">
+            <div id="nc-root"></div>
+        </main>
+
         <script src="https://unpkg.com/decap-cms@^3.9.0/dist/decap-cms.js"></script>
     </body>
 </html>

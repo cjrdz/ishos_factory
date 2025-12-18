@@ -1,0 +1,88 @@
+/* Import Bulma */
+@import 'bulma/css/bulma.min.css';
+
+/* Isho's Brand Colors */
+:root {
+    --isho-teal: #4db8c4;
+    --isho-pink: #f5a3c7;
+    --isho-dark-pink: #d64b8a;
+    --isho-light-pink: #ffc0e1;
+}
+
+/* Typography */
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Admin Header */
+.admin-header {
+    background: linear-gradient(135deg, var(--isho-teal) 0%, var(--isho-pink) 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
+}
+
+.admin-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-header .title {
+    color: white;
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-header .subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* Home Button */
+.home-button {
+    background-color: white;
+    color: var(--isho-dark-pink);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.home-button:hover {
+    background-color: var(--isho-light-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    color: var(--isho-dark-pink);
+}
+
+.home-button:active {
+    transform: translateY(0);
+}
+
+/* CMS Container */
+.cms-container {
+    min-height: calc(100vh - 200px);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .admin-header .container {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .admin-header .title {
+        font-size: 1.5rem;
+    }
+}
