@@ -1,4 +1,4 @@
-// pages/api/auth/[...route].ts
+// src/pages/api/auth/[...route].ts
 import type { APIRoute } from 'astro';
 
 export const prerender = false;
@@ -11,10 +11,13 @@ export const GET: APIRoute = async ({ request, params }) => {
     const clientSecret = import.meta.env.OAUTH_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
-        return new Response(JSON.stringify({ error: 'Missing OAuth credentials' }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        return new Response(
+            JSON.stringify({ error: 'Missing OAuth credentials' }), 
+            {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
+            }
+        );
     }
 
     const url = new URL(request.url);
@@ -29,22 +32,21 @@ export const GET: APIRoute = async ({ request, params }) => {
         authorizeUrl.searchParams.set('scope', 'repo,user');
         authorizeUrl.searchParams.set('state', state);
 
-        return new Response(null, {
-            status: 302,
-            headers: { Location: authorizeUrl.toString() }
-        });
+        return Response.redirect(authorizeUrl.toString(), 302);
     }
 
     // Step 2: GitHub callback - Exchange code for token
     if (routeParts[0] === 'callback') {
         const code = url.searchParams.get('code');
-        const state = url.searchParams.get('state') || '';
 
         if (!code) {
-            return new Response(JSON.stringify({ error: 'No code provided' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            });
+            return new Response(
+                JSON.stringify({ error: 'No authorization code provided' }), 
+                {
+                    status: 400,
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
         }
 
         try {
@@ -69,11 +71,11 @@ export const GET: APIRoute = async ({ request, params }) => {
                 throw new Error(data.error_description || 'Failed to get access token');
             }
 
-            // Return HTML that posts message back to Decap CMS
+            // Create the callback HTML page
             const html = `
 
 
-
+    
     Authorizing...
     
         body {
@@ -96,56 +98,103 @@ export const GET: APIRoute = async ({ request, params }) => {
 
 
     
-        Authorization Successful!
+        ✓ Authorization Successful!
         Redirecting to CMS...
     
     
-        (function() {
-            function receiveMessage(e) {
-                console.log("receiveMessage:", e);
-                window.opener.postMessage(
-                    'authorization:github:success:' + JSON.stringify({
-                        token: "${data.access_token}",
-                        provider: "github"
-                    }),
-                    e.origin
-                );
-                window.removeEventListener("message", receiveMessage, false);
-            }
-            
-            window.addEventListener("message", receiveMessage, false);
-            
-            console.log("Sending authorizing message");
-            window.opener.postMessage("authorizing:github", "*");
-            
-            // Fallback: close window after 3 seconds
-            setTimeout(function() {
-                window.close();
-            }, 3000);
-        })();
+(function() {
+    const token = "${data.access_token}";
+    const provider = "github";
+    
+    function receiveMessage(e) {
+        console.log("receiveMessage:", e);
+        window.opener.postMessage(
+            "authorization:" + provider + ":success:" + JSON.stringify({
+                token: token,
+                provider: provider
+            }),
+            e.origin
+        );
+        window.removeEventListener("message", receiveMessage, false);
+    }
+    
+    window.addEventListener("message", receiveMessage, false);
+    
+    console.log("Sending authorizing message to opener");
+    window.opener.postMessage("authorizing:" + provider, "*");
+    
+    setTimeout(function() {
+        console.log("Closing popup window");
+        window.close();
+    }, 3000);
+})();
     
 
 `;
 
             return new Response(html, {
                 status: 200,
-                headers: { 'Content-Type': 'text/html' }
+                headers: { 
+                    'Content-Type': 'text/html; charset=utf-8',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate'
+                }
             });
 
         } catch (error) {
             console.error('OAuth error:', error);
-            return new Response(JSON.stringify({ 
-                error: 'OAuth failed', 
-                details: error instanceof Error ? error.message : 'Unknown error'
-            }), {
+            
+            const errorHtml = `
+
+
+    
+    Authorization Error
+    
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+        }
+        .error {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: #d32f2f;
+        }
+    
+
+
+    
+        ✗ Authorization Failed
+        ${error instanceof Error ? error.message : 'Unknown error occurred'}
+        You can close this window and try again.
+    
+    
+        setTimeout(function() { window.close(); }, 5000);
+    
+
+`;
+
+            return new Response(errorHtml, {
                 status: 500,
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 
+                    'Content-Type': 'text/html; charset=utf-8',
+                    'Cache-Control': 'no-cache'
+                }
             });
         }
     }
 
-    return new Response(JSON.stringify({ error: 'Not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+        JSON.stringify({ error: 'Route not found' }), 
+        {
+            status: 404,
+            headers: { 'Content-Type': 'application/json' }
+        }
+    );
 };
