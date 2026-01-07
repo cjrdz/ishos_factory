@@ -3,11 +3,14 @@ import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel/serverless';
 import icon from 'astro-icon';
 
-// https://astro.build/config
+const isDev = process.env.NODE_ENV === 'development';
+
 export default defineConfig({
-    output: 'server',
-    adapter: vercel({
+  output: 'server',
+  adapter: isDev
+    ? undefined
+    : vercel({
         runtime: 'nodejs20.x',
-    }),
-    integrations: [icon()],
+      }),
+  integrations: [icon()],
 });

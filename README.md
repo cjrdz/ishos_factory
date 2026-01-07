@@ -1,64 +1,62 @@
 # Isho's Gelatos & Sorbetes
 
-Website for Isho's Gelatos & Sorbetes - El Salvador.
+Website for Isho's Gelatos & Sorbetes - El Salvador. A modern website showcasing menu items, locations, and contact information with an easy-to-use content management system.
 
 ## 🚀 Tech Stack
 
-- **Framework**: [Astro](https://astro.build) v5.16.6
-- **Styling**: Bulma CSS Framework
-- **CMS**: Decap CMS (formerly Netlify CMS)
-- **Deployment**: Vercel (Serverless)
-- **Icons**: Astro Icon with Iconify
+- **Astro** v5.16.6 - Static site generator
+- **Bulma CSS** - Styling framework
+- **Decap CMS** - Content management system
+- **Vercel** - Hosting and deployment
+- **TypeScript** - Type safety
 
 ## 📁 Project Structure
 
 ```
 /
 ├── public/
-│   ├── admin/          # Decap CMS configuration
-│   └── uploads/        # Menu images and media files
+│   ├── admin/          # CMS configuration
+│   └── uploads/        # Menu images
 ├── src/
-│   ├── assets/         # Static assets (icons, etc.)
 │   ├── components/     # Astro components
 │   │   ├── cards/      # Card components
-│   │   ├── layout/     # Layout components (NavBar, Footer, etc.)
-│   │   └── sections/   # Page sections (Hero, Menu, About, Contact)
-│   ├── content/        # CMS content (menu items, locations, contact)
-│   ├── layouts/        # Page layouts
-│   ├── pages/          # Routes and pages
-│   │   ├── admin/      # CMS admin interface
-│   │   └── api/        # API routes (authentication)
-│   ├── styles/         # Global styles
-│   └── types/          # TypeScript type definitions
-└── vercel.json         # Vercel deployment configuration
+│   │   ├── layout/     # NavBar, Footer, etc.
+│   │   └── sections/   # Hero, Menu, About, Contact
+│   ├── content/        # CMS content (JSON files)
+│   │   ├── menu/       # Menu categories
+│   │   ├── locations/  # Store locations
+│   │   └── contact.json
+│   ├── pages/          # Routes
+│   │   ├── index.astro # Homepage
+│   │   └── api/        # API routes (CMS auth)
+│   └── styles/         # Global CSS
 ```
 
 ## 🧞 Commands
 
-All commands are run from the root of the project:
-
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| Command        | Action                                    |
+| :------------- | :---------------------------------------- |
+| `pnpm install` | Install dependencies                      |
+| `pnpm dev`     | Start dev server at `localhost:4321`     |
+| `pnpm build`   | Build for production                     |
+| `pnpm preview` | Preview production build                 |
 
 ## 📝 Content Management
 
-Content is managed through Decap CMS, accessible at `/admin`. The CMS allows editing:
+Content is managed through **Decap CMS** at `/admin`. You can edit:
 
-- **Menu items** (`src/content/menu/*.json`)
-- **Locations** (`src/content/locations/*.json`)
-- **Contact information** (`src/content/contact.json`)
+- **Menu items** - Categories, images, and order
+- **Locations** - Store locations with maps
+- **Contact info** - Phone, hours, address, social media
 
-Menu images are stored in `public/uploads/` and referenced in the menu JSON files.
+All content is stored as JSON files in `src/content/`.
 
 ## 🚢 Deployment
 
-The project is configured for deployment on Vercel with serverless output. The deployment is handled automatically through the Vercel integration.
+Deployed on **Vercel** at: `https://ishos-factory.vercel.app`
+
+Deployment is automatic via GitHub integration.
 
 ## 📄 License
 
-Private project - All rights reserved.
+Personal project - All rights reserved.
